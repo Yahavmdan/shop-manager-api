@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
+
 //public routes
 
 Route::get('/products', [ProductController::class, 'index']);
@@ -21,17 +23,17 @@ Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::get('/products/search/{name}', [ProductController::class, 'search']);
+//Route::post('/send-email', [MailController::class, 'sendEmail']);
+
+//guests routes
+
+Route::post('/send-forgot-password-email',[UserController::class, 'sendResetPasswordEmail']);
 
 //protected routes
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/reset-password-form',[UserController::class, 'resetPasswordForm']);
     Route::post('/products', [ProductController::class, 'store']);
     Route::put('/products/{id}', [ProductController::class, 'update']);
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 });
-
-/*
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-return $request->user();
-});
- */
