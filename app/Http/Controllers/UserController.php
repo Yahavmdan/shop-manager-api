@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
@@ -25,7 +26,7 @@ class UserController extends Controller
             'password' => bcrypt($fields['password']),
 
         ]);
-        $token = $user->createToken($fields['password'])->plainTextToken;
+        $token = $user->createToken('sdhkfjg44hbf*&^GF')->plainTextToken;
 
         $response = [
             'user'  => $user,
@@ -42,12 +43,17 @@ class UserController extends Controller
         ]);
 
         $user = User::where('email', $fields['email'])->first();
-        if (!$user || !Hash::check($fields['password'], $user->password)) {
+        if (!$user) {
             return response([
-                'message' => 'One of the details is wrong',
+                'message' => 'This email does not exist on our records',
             ], 401);
         }
-        $token = $user->createToken($fields['password'])->plainTextToken;
+        if (!Hash::check($fields['password'], $user->password)) {
+            return response([
+                'message' => 'Password is wrong',
+            ], 401);
+        }
+        $token = $user->createToken('sdhkfjg44hbf*&^GF')->plainTextToken;
 
         $response = [
             'user'  => $user,
@@ -81,6 +87,21 @@ class UserController extends Controller
                 'any user in our records'], 400);
     }
 
+    public function checkToken(Request $request)
+    {
+        $token = $request->getContent();
+
+        if ($token) {
+            $tokenExist = PersonalAccessToken::findToken($token);
+            if ($tokenExist) {
+                return response(['message' => 'Ok', 'responseCode' => 1], 200);
+            } else {
+                return response(['message' => 'The given token was wrong', 'responseCode' => 2], 400);
+            }
+        } else {
+            return  response(['message' => 'The given token does not exist', 'responseCode' => 3], 400);
+        }
+    }
     public function resetPasswordForm(Request $request) {
 
     }
