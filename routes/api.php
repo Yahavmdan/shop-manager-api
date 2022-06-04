@@ -23,7 +23,7 @@ Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::get('/products/search/{name}', [ProductController::class, 'search']);
-//Route::post('/send-email', [MailController::class, 'sendEmail']);
+Route::post('/check-token',[UserController::class, 'checkToken']);
 
 //guests routes
 
