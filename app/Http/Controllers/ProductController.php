@@ -27,8 +27,8 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'img' => 'required',
+            'name'  => 'required|string',
+            'img'   => 'required',
             'price' => 'required',
         ]);
         return Product::create($request->all());
@@ -77,8 +77,13 @@ class ProductController extends Controller
      * @param  str  $name
      * @return \Illuminate\Http\Response
      */
-    public function search($name)
+    public function search($searchValue)
     {
-        return Product::where('name', 'like', '%' . $name . '%')->get();
+        return Product::
+        where('name', 'like', '%' . $searchValue . '%')
+            ->orWhere('price', 'like', '%' . $searchValue . '%')
+            ->orWhere('description', 'like', '%' . $searchValue . '%')
+            ->get();
+
     }
 }

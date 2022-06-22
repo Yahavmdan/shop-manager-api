@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\MailController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -24,9 +23,6 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::get('/products/search/{name}', [ProductController::class, 'search']);
 Route::post('/check-token',[UserController::class, 'checkToken']);
-
-//guests routes
-
 Route::post('/send-forgot-password-email',[UserController::class, 'sendResetPasswordEmail']);
 
 //protected routes

@@ -18,15 +18,21 @@ class UserController extends Controller
             'name'     => 'required|string',
             'email'    => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed',
+            'is_admin' => 'boolean'
         ]));
 
         $user = User::create([
             'name'     => $fields['name'],
             'email'    => $fields['email'],
             'password' => bcrypt($fields['password']),
-
+            'is_admin' => $fields['is_admin']?: 0
         ]);
-        $token = $user->createToken('sdhkfjg44hbf*&^GF')->plainTextToken;
+
+        if ($user['is_admin']) {
+            $token = $user->createToken($user->id)->plainTextToken;
+        } else {
+            $token = $user->createToken($user->id)->plainTextToken;
+        }
 
         $response = [
             'user'  => $user,
@@ -53,7 +59,12 @@ class UserController extends Controller
                 'message' => 'Password is wrong',
             ], 401);
         }
-        $token = $user->createToken('sdhkfjg44hbf*&^GF')->plainTextToken;
+
+        if ($user['is_admin']) {
+            $token = $user->createToken($user->id)->plainTextToken;
+        } else {
+            $token = $user->createToken($user->id)->plainTextToken;
+        }
 
         $response = [
             'user'  => $user,
@@ -68,12 +79,12 @@ class UserController extends Controller
         $user = User::where('email', $email)->first();
 
         if ($user) {
-            $randomPassword = Hash::make(Str::random(1));
-            $token = $user->createToken($randomPassword)->plainTextToken;
+            $token = $user->createToken($user->id)->plainTextToken;
+            $user->withAccessToken($token);
             $emailBuilder = [
                 'title' => 'Hello ' . $user->name . '!',
                 'body'  => 'Please click on the link below to reset your password',
-                'link'  => ''.env('APP_URL_CLIENT').'/reset-password-form/'.$token,
+                'link'  => ''.env('APP_URL_CLIENT').'/reset-password-form?token='.$token,
             ];
 
             Mail::to($email)->send(new ResetEmail($emailBuilder));
@@ -82,9 +93,7 @@ class UserController extends Controller
             ], 200);
 
         }
-        return response([
-            'message' => 'The inserted e-mail does not match ' .
-                'any user in our records'], 400);
+        return response(['message' => 'The inserted e-mail does not match any user in our records'], 400);
     }
 
     public function checkToken(Request $request)
@@ -93,14 +102,15 @@ class UserController extends Controller
 
         if ($token) {
             $tokenExist = PersonalAccessToken::findToken($token);
-            if ($tokenExist) {
-                return response(['message' => 'Ok', 'responseCode' => 1], 200);
-            } else {
-                return response(['message' => 'The given token was wrong', 'responseCode' => 2], 400);
+            $user = User::where('id' , $tokenExist->name)->first();
+            if ($tokenExist && $user->is_admin == 1) {
+                return response(['message' => 'Ok', 'responseCode'  => 1], 200);
             }
-        } else {
-            return  response(['message' => 'The given token does not exist', 'responseCode' => 3], 400);
+            if ($tokenExist && $user->is_admin == 0) {
+                return response(['message' => 'Ok', 'responseCode'  => 2], 200);
+            }
         }
+        return response(['message' => 'Bad request', 'responseCode' => 3], 400);
     }
     public function resetPasswordForm(Request $request) {
 
