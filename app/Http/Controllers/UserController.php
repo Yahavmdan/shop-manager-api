@@ -18,7 +18,7 @@ class UserController extends Controller
             'name'     => 'required|string',
             'email'    => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed',
-            'is_admin' => 'boolean'
+            'is_admin' => 'nullable'
         ]));
 
         $user = User::create([
@@ -28,11 +28,7 @@ class UserController extends Controller
             'is_admin' => $fields['is_admin']?: 0
         ]);
 
-        if ($user['is_admin']) {
-            $token = $user->createToken($user->id)->plainTextToken;
-        } else {
-            $token = $user->createToken($user->id)->plainTextToken;
-        }
+        $token = $user->createToken($user->id)->plainTextToken;
 
         $response = [
             'user'  => $user,
@@ -60,11 +56,7 @@ class UserController extends Controller
             ], 401);
         }
 
-        if ($user['is_admin']) {
             $token = $user->createToken($user->id)->plainTextToken;
-        } else {
-            $token = $user->createToken($user->id)->plainTextToken;
-        }
 
         $response = [
             'user'  => $user,
@@ -112,8 +104,14 @@ class UserController extends Controller
         }
         return response(['message' => 'Bad request', 'responseCode' => 3], 400);
     }
-    public function resetPasswordForm(Request $request) {
 
+    public function resetPassword(Request $request) {
+        $newPassword = $request->newPassword;
+        $token = $request->token;
+        $tokenExist = PersonalAccessToken::findToken($token);
+        $user = User::where('id', $tokenExist->name)->first();
+        $user->password = Hash::make($newPassword);
+        $user->save();
     }
 
 }
