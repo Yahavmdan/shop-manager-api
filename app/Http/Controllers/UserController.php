@@ -19,7 +19,6 @@ class UserController extends Controller
             'email'    => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed',
             'is_admin' => 'nullable',
-            'img'      => 'string|nullable'
         ]));
 
         $user = User::create([
@@ -27,16 +26,7 @@ class UserController extends Controller
             'email'    => $fields['email'],
             'password' => bcrypt($fields['password']),
             'is_admin' => $fields['is_admin']?: 0,
-            'img'      => $fields['img']
         ]);
-
-        if($request->file('img')){
-            $file= $request->file('img');
-            $filename= date('YmdHi').$file->getClientOriginalName();
-            $file-> move(public_path('public/img'), $filename);
-            $data['image']= $filename;
-        }
-
 
         $token = $user->createToken($user->id)->plainTextToken;
 
