@@ -11,7 +11,8 @@
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.7",
         "league/oauth2-google": "^4.0",
-        "phpmailer/phpmailer": "^6.6"
+        "phpmailer/phpmailer": "^6.6",
+      "ext-http": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

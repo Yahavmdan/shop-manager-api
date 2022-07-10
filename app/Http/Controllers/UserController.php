@@ -18,15 +18,25 @@ class UserController extends Controller
             'name'     => 'required|string',
             'email'    => 'required|string|unique:users,email',
             'password' => 'required|string|confirmed',
-            'is_admin' => 'nullable'
+            'is_admin' => 'nullable',
+            'img'      => 'string|nullable'
         ]));
 
         $user = User::create([
             'name'     => $fields['name'],
             'email'    => $fields['email'],
             'password' => bcrypt($fields['password']),
-            'is_admin' => $fields['is_admin']?: 0
+            'is_admin' => $fields['is_admin']?: 0,
+            'img'      => $fields['img']
         ]);
+
+        if($request->file('img')){
+            $file= $request->file('img');
+            $filename= date('YmdHi').$file->getClientOriginalName();
+            $file-> move(public_path('public/img'), $filename);
+            $data['image']= $filename;
+        }
+
 
         $token = $user->createToken($user->id)->plainTextToken;
 
@@ -112,6 +122,43 @@ class UserController extends Controller
         $user = User::where('id', $tokenExist->name)->first();
         $user->password = Hash::make($newPassword);
         $user->save();
+    }
+
+    public function destroy($id) {
+
+        $admin = User::where('id', $id)->first();
+        if ($admin->is_admin === '1') {
+            return response('Cannot delete admin user',400);
+        }
+
+        return User::destroy($id);
+    }
+
+    public function update(Request $request, $id) {
+        $user = User::find($id);
+        $user->update($request->all());
+
+        return $user;
+    }
+
+    public function show($id)
+    {
+        return User::find($id);
+    }
+
+    public function index()
+    {
+        $response = User::all();
+        return response($response,200);
+    }
+    public function search($searchValue)
+    {
+        return User::
+        where('name', 'like', '%' . $searchValue . '%')
+            ->orWhere('email', 'like', '%' . $searchValue . '%')
+            ->orWhere('id', 'like', '%' . $searchValue . '%')
+            ->get();
+
     }
 
 }
