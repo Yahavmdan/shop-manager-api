@@ -105,7 +105,8 @@ class UserController extends Controller
         return response(['message' => 'Bad request', 'responseCode' => 3], 400);
     }
 
-    public function resetPassword(Request $request) {
+    public function resetPassword(Request $request)
+    {
         $newPassword = $request->newPassword;
         $token = $request->token;
         $tokenExist = PersonalAccessToken::findToken($token);
@@ -114,7 +115,8 @@ class UserController extends Controller
         $user->save();
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
 
         $admin = User::where('id', $id)->first();
         if ($admin->is_admin === '1') {
@@ -124,7 +126,8 @@ class UserController extends Controller
         return User::destroy($id);
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $user = User::find($id);
         $user->update($request->all());
 
