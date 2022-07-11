@@ -25,3 +25,6 @@ Steps to run locally:
 \\You can now access the project at localhost:8000\\
 
 \\make sure that sql is active as the data will be saved in a sql DB\\
+
+! Make sure api is listening on port 8000 !
+After BOTH api and client are up and running go to localhost:4200 to start using the app
