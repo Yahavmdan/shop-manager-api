@@ -144,6 +144,7 @@ class UserController extends Controller
         $response = User::all();
         return response($response,200);
     }
+
     public function search($searchValue)
     {
         return User::
@@ -151,7 +152,6 @@ class UserController extends Controller
             ->orWhere('email', 'like', '%' . $searchValue . '%')
             ->orWhere('id', 'like', '%' . $searchValue . '%')
             ->get();
-
     }
 
 }
