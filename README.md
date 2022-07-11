@@ -5,6 +5,7 @@ Steps to run locally:
 
 -   Download api zip file
 -   unzip it and open in vscode
+-   npm i
 -   Create a mysql database with xampp locally named onlineShop -> utf8_general_ci
 -   Rename '.env.example' file to '.env' inside the project root and fill the database information as follow:
 
