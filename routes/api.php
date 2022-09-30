@@ -28,7 +28,7 @@ Route::get('/products/search/{name}', [ProductController::class, 'search']);
 Route::post('/check-token',[UserController::class, 'checkToken']);
 Route::post('/send-forgot-password-email',[UserController::class, 'sendResetPasswordEmail']);
 Route::put('reset-password', [UserController::class, 'resetPassword']);
-Route::get('/products/search/{name}', [ProductController::class, 'sort']);
+//Route::get('/products/search/{name}', [ProductController::class, 'sort']);
 
 //protected routes
 

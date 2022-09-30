@@ -86,14 +86,13 @@ class ProductController extends Controller
 
     }
 
-    public function sort(Request $request)
-    {
-        return Product::orderBy('price', 'DESC')->get();
+//    public function sort(Request $request)
+//    {
+//        return Product::orderBy('price', 'DESC')->get();
 //        return Product::orderBy('price', 'ASC')->get();
 //        return Product::orderBy('created_at', 'DESC')->get();
 //        return Product::orderBy('created_at', 'ASC')->get();
 //        return Product::orderBy('updated_at', 'DESC')->get();
 //        return Product::orderBy('updated_at', 'ASC')->get();
-
-    }
+//    }
 }
