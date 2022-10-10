@@ -76,7 +76,7 @@ class ProductController extends Controller
      * @param  str  $name
      * @return \Illuminate\Http\Response
      */
-    public function search($searchValue)
+    public function searchh($searchValue)
     {
         return Product::
         where('name', 'like', '%' . $searchValue . '%')
