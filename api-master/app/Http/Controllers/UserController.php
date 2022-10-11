@@ -14,6 +14,11 @@ class UserController extends Controller
 {
     public function register(Request $request)
     {
+        $attemptedEmail = User::where('email', $request->email)->first();
+        if ($attemptedEmail) {
+            return response(['message' => 'User already exist'], 403);
+        }
+
         $fields = $request->validate(([
             'name'     => 'required|string',
             'email'    => 'required|string|unique:users,email',
@@ -44,16 +49,18 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
 
+        $badRequest = 'One of the details is wrong';
+
         $user = User::where('email', $fields['email'])->first();
         if (!$user) {
             return response([
-                'message' => 'This email does not exist on our records',
-            ], 401);
+                'message' => $badRequest,
+            ], 403);
         }
         if (!Hash::check($fields['password'], $user->password)) {
             return response([
-                'message' => 'Password is wrong',
-            ], 401);
+                'message' => $badRequest,
+            ], 403);
         }
 
             $token = $user->createToken($user->id)->plainTextToken;
