@@ -81,16 +81,18 @@ class ProductController extends Controller
      * Search for a name.
      *
      * @param  str  $name
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function search($searchValue)
     {
+        if ($searchValue == 0) {
+            return Product::all();
+        }
         return Product::
         where('name', 'like', '%' . $searchValue . '%')
             ->orWhere('price', 'like', '%' . $searchValue . '%')
             ->orWhere('description', 'like', '%' . $searchValue . '%')
             ->get();
-
     }
 
 //    public function sort(Request $request)
